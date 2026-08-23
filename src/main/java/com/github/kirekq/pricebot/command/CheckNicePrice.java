@@ -1,5 +1,7 @@
 package com.github.kirekq.pricebot.command;
 
+import com.github.kirekq.pricebot.data.Product;
+import com.github.kirekq.pricebot.data.ProductRepository;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -14,16 +16,41 @@ public class CheckNicePrice implements BotCommand {
     private final String commandName = "/checkniceprice";
     private final TelegramClient telegramClient;
     private final parseNicePrice parser;
-    CheckNicePrice(TelegramClient telegramClient, parseNicePrice parser){
+    private final ProductRepository productRepository;
+    CheckNicePrice(TelegramClient telegramClient, parseNicePrice parser, ProductRepository productRepository){
         this.telegramClient = telegramClient;
         this.parser = parser;
+        this.productRepository = productRepository;
+    }
+    private void addToData(long chat_id, String article, String name, String price){
+        Product product = new Product();
+        product.setChatId(chat_id);
+        product.setPrice(Double.parseDouble(price));
+        product.setArticle(article);
+        product.setName(name);
+        product.setPriceNew(Double.parseDouble(price));
+        productRepository.save(product);
     }
     @Override
     public String getCommandName(){
         return commandName;
     }
+
     @Override
     public void execute(long chat_id, String[] fullMessage){
+        if (fullMessage.length < 2){
+            try {
+                SendMessage message = SendMessage
+                        .builder()
+                        .chatId(chat_id)
+                        .text("Неправильный артикул!")
+                        .build();
+                telegramClient.execute(message);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
         String Article = fullMessage[1];
         try {
             HashMap<String, String> fullData = parser.parse(Article);
@@ -31,7 +58,10 @@ public class CheckNicePrice implements BotCommand {
             if (fullData.isEmpty()){
                 messageText = "Неправильный артикул!";
             } else {
-                messageText = fullData.get("Name") + " добавлен!\nЦена = " + fullData.get("Price") + "₽";
+                String name = fullData.get("Name");
+                String price = fullData.get("Price");
+                addToData(chat_id, Article, name, price);
+                messageText = name + " добавлен!\nЦена = " + price + "₽";
             }
             SendMessage message = SendMessage
                     .builder()
