@@ -31,6 +31,15 @@ public class CheckNicePrice implements BotCommand {
         product.setPriceNew(Double.parseDouble(price));
         productRepository.save(product);
     }
+
+    private void sendMessage(long chat_id, String messageText) throws TelegramApiException{
+        SendMessage message = SendMessage
+                .builder()
+                .chatId(chat_id)
+                .text(messageText)
+                .build();
+        telegramClient.execute(message);
+    }
     @Override
     public String getCommandName(){
         return commandName;
@@ -40,12 +49,7 @@ public class CheckNicePrice implements BotCommand {
     public void execute(long chat_id, String[] fullMessage){
         if (fullMessage.length < 2){
             try {
-                SendMessage message = SendMessage
-                        .builder()
-                        .chatId(chat_id)
-                        .text("Неправильный артикул!")
-                        .build();
-                telegramClient.execute(message);
+                sendMessage(chat_id, "Неправильный артикул!");
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
@@ -63,12 +67,7 @@ public class CheckNicePrice implements BotCommand {
                 addToData(chat_id, Article, name, price);
                 messageText = name + " добавлен!\nЦена = " + price + "₽";
             }
-            SendMessage message = SendMessage
-                    .builder()
-                    .chatId(chat_id)
-                    .text(messageText)
-                    .build();
-            telegramClient.execute(message);
+            sendMessage(chat_id, messageText);
         } catch (TelegramApiException | IOException e) {
             e.printStackTrace();
         }
