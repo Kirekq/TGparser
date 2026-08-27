@@ -3,7 +3,7 @@ package com.github.kirekq.pricebot.data;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "productsN")
+@Table(name = "productsN", uniqueConstraints = @UniqueConstraint(columnNames = {"chat_id", "article"}))
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
