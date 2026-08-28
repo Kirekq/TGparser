@@ -35,9 +35,6 @@ public class ParseNicePrice {
         return fullData;
     }
     private boolean isParse(int totalHits) {
-        if (totalHits > 1) {
-            return false;
-        }
-        return true;
+        return totalHits == 1;
     }
 }

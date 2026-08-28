@@ -52,7 +52,12 @@ public class ParseWildberries {
         String valueName = product.path("name").asText();
         String brand = product.path("brand").asText();
         valueName += " " + brand;
-        JsonNode price = product.path("sizes").get(0).path("price");
+        JsonNode sizes = product.path("sizes");
+        if (sizes.isEmpty()) {
+            System.out.println(valueName + " — нет в наличии");
+            return fullData;
+        }
+        JsonNode price = sizes.get(0).path("price");
 
         if (price.isMissingNode()) {
             System.out.println(valueName + " — нет в наличии");
