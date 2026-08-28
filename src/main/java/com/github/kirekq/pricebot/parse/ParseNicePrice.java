@@ -7,11 +7,12 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 @Service
-public class parseNicePrice {
-    public HashMap<String, String> parse(String Article) throws IOException {
-        HashMap<String, String> fullData = new HashMap<>();
+public class ParseNicePrice {
+    public Map<String, String> parse(String Article) throws IOException {
+        Map<String, String> fullData = new HashMap<>();
         String URL = "https://sort.diginetica.net/search?st="+ Article + "&apiKey=2513IW97F8&fullData=true";
         String jsonText = Jsoup.connect(URL)
                 .ignoreContentType(true)
