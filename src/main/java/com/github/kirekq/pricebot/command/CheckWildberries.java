@@ -60,6 +60,8 @@ public class CheckWildberries implements BotCommand{
             String messageText;
             if (fullData.isEmpty()){
                 messageText = "Неправильный артикул!";
+            } else if (productRepositoryWildberries.existsByChatIdAndArticle(chat_id, Article)) {
+                messageText = "Артикул " + Article + " уже отслеживается";
             } else {
                 String name = fullData.get("Name");
                 String price = fullData.get("Price");
