@@ -8,6 +8,7 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     long deleteByChatIdAndArticle(Long chatId, String article);
+    boolean existsByChatIdAndArticle(Long chatId, String article);
     @Query(value = "SELECT * FROM productsN WHERE chat_id = :chatId AND price_new > price", nativeQuery = true)
     List<Product> findIncreasedPrice(@Param("chatId") Long chatId);
 
