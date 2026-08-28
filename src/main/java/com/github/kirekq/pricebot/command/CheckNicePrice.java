@@ -6,29 +6,29 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import com.github.kirekq.pricebot.parse.parseNicePrice;
+import com.github.kirekq.pricebot.parse.ParseNicePrice;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class CheckNicePrice implements BotCommand {
     private final String commandName = "/checkniceprice";
     private final TelegramClient telegramClient;
-    private final parseNicePrice parser;
+    private final ParseNicePrice parser;
     private final ProductRepository productRepository;
-    CheckNicePrice(TelegramClient telegramClient, parseNicePrice parser, ProductRepository productRepository){
+    CheckNicePrice(TelegramClient telegramClient, ParseNicePrice parser, ProductRepository productRepository){
         this.telegramClient = telegramClient;
         this.parser = parser;
         this.productRepository = productRepository;
     }
-    private void addToData(long chat_id, String article, String name, String price){
+    private void addToData(long chat_id, String article, String name, String price, String priceNew){
         Product product = new Product();
         product.setChatId(chat_id);
         product.setPrice(Double.parseDouble(price));
         product.setArticle(article);
         product.setName(name);
-        product.setPriceNew(Double.parseDouble(price));
+        product.setPriceNew(Double.parseDouble(priceNew));
         productRepository.save(product);
     }
 
@@ -57,14 +57,14 @@ public class CheckNicePrice implements BotCommand {
         }
         String Article = fullMessage[1];
         try {
-            HashMap<String, String> fullData = parser.parse(Article);
+            Map<String, String> fullData = parser.parse(Article);
             String messageText;
             if (fullData.isEmpty()){
                 messageText = "Неправильный артикул!";
             } else {
                 String name = fullData.get("Name");
                 String price = fullData.get("Price");
-                addToData(chat_id, Article, name, price);
+                addToData(chat_id, Article, name, price, price);
                 messageText = name + " добавлен!\nЦена = " + price + "₽";
             }
             sendMessage(chat_id, messageText);
