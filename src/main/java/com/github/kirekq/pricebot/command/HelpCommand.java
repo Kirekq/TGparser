@@ -7,7 +7,10 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Component
 public class HelpCommand implements BotCommand {
-    private final String helpMessage = "Команды:";
+    private final String helpMessage = "Команды:\n" +
+            "/checkwildberries - начать отслеживать цену на артикул Wildberries\n" +
+            "/checkniceprice - начать отслеживать цену на артикул NicePrice62\n" +
+            "/delete - перестать отслеживать артикул Wildberries или NicePrice62";
     private final String commandName = "/help";
     private final TelegramClient telegramClient;
     HelpCommand(TelegramClient telegramClient){
